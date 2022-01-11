@@ -6,13 +6,15 @@ require_relative 'currency_numberal/currencies'
 module CurrencyNumberal
   class Error < StandardError; end
 
-  class Currency
+  class Currency < Numeric
     attr_accessor :code, :number
 
+    # rubocop:disable Lint/MissingSuper
     def initialize(number, code)
       @number = number
       @code = code
     end
+    # rubocop:enable Lint/MissingSuper
 
     def symbol
       CurrencyNumberal::CURRENCIES[@code][:symbol]
@@ -37,7 +39,14 @@ module CurrencyNumberal
     end
 
     def coerce(other)
-      [self.class.new(other.to_f, @code), self]
+      case other
+      when Float
+        [self.class.new(other, @code), self]
+      when Integer
+        [self.class.new(other, @code), self]
+      else
+        [self.class.new(other.to_f, @code), self]
+      end
     end
 
     def +(other)
@@ -51,13 +60,17 @@ module CurrencyNumberal
     def *(other)
       raise Error, 'Invalid number' unless other.is_a?(Numeric)
 
-      self.class.new(@number * other, @code)
+      self.class.new(@number.to_f * other, @code)
     end
 
     def /(other)
       raise Error, 'Invalid number' unless other.is_a?(Numeric)
 
-      self.class.new(@number / other, @code)
+      self.class.new(@number.to_f / other, @code)
+    end
+
+    def <=>(other)
+      base <=> other.base
     end
   end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module CurrencyNumberal
   CURRENCIES = {
     aed: {
@@ -632,3 +633,5 @@ module CurrencyNumberal
     }
   }.freeze
 end
+
+# rubocop:enable Metrics/ModuleLength

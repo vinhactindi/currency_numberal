@@ -41,6 +41,11 @@ puts 1.use / 2
 
 1.usd == 2.usd
 # => false
+
+# update exchange rate
+CurrencyNumberal.exchange_rate(base: :jpy, code: :vnd, rate: 300)
+puts 1.jpy.vnd
+# => 300.0 ₫
 ```
 
 ## Development

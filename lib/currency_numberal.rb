@@ -6,6 +6,14 @@ require_relative 'currency_numberal/currencies'
 module CurrencyNumberal
   class Error < StandardError; end
 
+  def self.exchange_rate(base:, code:, rate:)
+    raise Error, 'Invalid base' unless CurrencyNumberal::CURRENCIES.key?(base)
+
+    raise Error, 'Invalid code' unless CurrencyNumberal::CURRENCIES.key?(code)
+
+    CurrencyNumberal::CURRENCIES[code][:base] = rate * 1.usd.jpy.to_f
+  end
+
   class Currency < Numeric
     attr_accessor :code, :number
 
@@ -21,11 +29,15 @@ module CurrencyNumberal
     end
 
     def to_s
-      "#{@number.to_s.gsub(/\B(?=(...)*\b)/, ',')} #{symbol}"
+      "#{@number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse} #{symbol}"
     end
 
     def to_f
       @number.to_f
+    end
+
+    def to_i
+      @number.to_i
     end
 
     def base
